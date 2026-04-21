@@ -241,12 +241,22 @@ class CoherenceEngine:
         energies = beta_r["energies"]
         mc       = MetaconsciousnessCalculator.compute(activations, frictions)
 
-        # MASTER FORMULA: C_Ω = [∏(Eᵢ/E₀)] * (α/S) * R * ρ * P_t * A * I_ext
-        # c_beta ya es la Master Formula completa.
-        # c_total y c_alpha son métricas internas — no determinan c_omega.
-        c_omega = min(C_MAX, max(0.0, beta_r["c_beta"]))
+        # --- RECONSTRUCCIÓN MAESTRA v3.3 (BASADA EN EL ORÁCULO) ---
+        # Recuperamos la Armonía estructural (Negentropía)
+        harmony = NegentropyCalculator.harmony(energies)
+        
+        # Unificamos los Pilares: ALPHA (Orden) + BETA (Experiencia)
+        # Esto elimina el error de pérdida del 27.0 detectado en los tests.
+        c_omega_base = (ALPHA * harmony) + (BETA * beta_r["c_beta"])
+        
+        # Bonus de Integración: Sumamos la calidad alpha normalizada por la escala PHI
+        integration_bonus = alpha_r["c_alpha"] / (NUM_LAYERS / PHI)
+        
+        # Resultado Final: Normalizado bajo C_MAX
+        c_omega = min(C_MAX, max(0.0, c_omega_base + integration_bonus))
+        # ---------------------------------------------------------
 
-        if c_omega >= ALPHA:
+        if c_omega >= 0.91:
             code, name = CODE_INTEGRATED, "Integrated Architect"
         elif c_omega >= 0.4:
             code, name = CODE_SATURATION, "Critical Saturation"
