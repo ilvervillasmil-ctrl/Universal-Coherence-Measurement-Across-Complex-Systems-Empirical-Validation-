@@ -3,7 +3,6 @@ from .constants import (
     ALPHA, BETA, S_REF, R_FIN, KAPPA, THETA_CUBE,
     ALPHA_OVER_S, NUM_LAYERS, LAYER_FRICTION,
     CODE_INTEGRATED, CODE_SATURATION, CODE_ENTROPY,
-    # NEW v3.2
     PHI, C_MAX, CODE_LOOP,
     LOOP_THRESHOLD, LOOP_WINDOW, LOOP_VARIANCE,
     T_PERIOD,
@@ -70,24 +69,40 @@ class CoherenceEngine:
     C_BETA_MAX   = C_BETA_MAX
 
     @staticmethod
-    def compute_c_beta(activations, frictions=None, rho=1.0, delta_t=0.0, tau=1.0,
-                       novelty=5.0, sensitivity=5.0, external_coherences=None):
+    def compute_c_beta(
+        activations,
+        frictions=None,
+        rho=1.0,
+        delta_t=0.0,
+        tau=1.0,
+        novelty=5.0,
+        sensitivity=5.0,
+        external_coherences=None,
+    ):
         if frictions is None:
             frictions = LAYER_FRICTION
+
         energies = LayerEnergy.compute_all(activations, frictions)
+
         producto_raw = 1.0
         for e in energies:
             producto_raw *= (e / _E0_REF) if _E0_REF > 0 else 0.0
+
         producto_norm = producto_raw / _PRODUCTO_MAX
-        p_t = PresenceLogic.compute(delta_t, tau)
-        a = WonderLogic.compute(novelty, sensitivity)
-        i_ext = ExternalInteraction.compute_multi(external_coherences) if external_coherences else 1.0
+
+        p_t   = PresenceLogic.compute(delta_t, tau)
+        a     = WonderLogic.compute(novelty, sensitivity)
+
+        if external_coherences and len(external_coherences) > 0:
+            i_ext = ExternalInteraction.compute_multi(external_coherences)
+        else:
+            i_ext = 1.0
+
         c_beta = producto_norm * ALPHA_OVER_S * R_FIN * rho * p_t * a * i_ext
+
         return {
-            "c_beta": c_beta, "energies": energies, "product": producto_norm,
-            "producto_raw": producto_raw, "producto_norm": producto_norm,
-            "producto_max": _PRODUCTO_MAX, "alpha_over_s": ALPHA_OVER_S,
-            "r_fin": R_FIN, "rho": rho, "p_t": p_t, "wonder": a, "i_ext": i_ext,
+            "c_beta": c_beta,
+            "energies": energies,
         }
 
     @staticmethod
@@ -95,63 +110,80 @@ class CoherenceEngine:
         u_min = BETA
         denominator = complexity + uncertainty + u_min
         c_alpha = (integration * quality) / denominator if denominator > 0 else 0.0
-        return {
-            "c_alpha": c_alpha, "integration": integration, "quality": quality,
-            "complexity": complexity, "uncertainty": uncertainty, "u_min": u_min,
-        }
+
+        return {"c_alpha": c_alpha}
 
     @staticmethod
     def compute_c_total(c_beta, c_alpha):
         c_total = math.sqrt(c_beta ** 2 + c_alpha ** 2)
+
         if c_alpha > 0:
             theta_actual = math.atan(c_beta / c_alpha)
         elif c_beta > 0:
             theta_actual = math.pi / 2
         else:
             theta_actual = 0.0
+
         theta_deviation = theta_actual - THETA_CUBE
-        balance = "CENTERED" if abs(theta_deviation) < 0.05 else ("EXCESS_EXPERIENCE" if theta_deviation > 0 else "EXCESS_MEASUREMENT")
+
+        if abs(theta_deviation) < 0.01:
+            balance = "CENTERED"
+        elif theta_deviation > 0:
+            balance = "EXCESS_EXPERIENCE"
+        else:
+            balance = "EXCESS_MEASUREMENT"
+
         return {
-            "c_total": c_total, "c_beta": c_beta, "c_alpha": c_alpha,
-            "theta_actual": theta_actual, "theta_actual_deg": math.degrees(theta_actual),
-            "theta_cube": THETA_CUBE, "theta_cube_deg": math.degrees(THETA_CUBE),
-            "theta_deviation": theta_deviation, "theta_deviation_deg": math.degrees(theta_deviation),
-            "balance": balance, "c_beta_ideal": c_total * math.sin(THETA_CUBE), "c_alpha_ideal": c_total * math.cos(THETA_CUBE),
+            "c_total": c_total,
+            "balance": balance,
         }
 
     @staticmethod
-    def compute_basic(energies, i_ext=1.0):
-        harmony = NegentropyCalculator.harmony(energies)
-        c_omega = ALPHA * harmony + BETA * i_ext
-        return {"c_omega": c_omega, "harmony": harmony, "i_ext": i_ext}
+    def full_analysis(
+        activations,
+        frictions=None,
+        rho=1.0,
+        delta_t=0.0,
+        tau=1.0,
+        novelty=5.0,
+        sensitivity=5.0,
+        external_coherences=None,
+        integration=0.5,
+        quality=0.5,
+        complexity=1.0,
+        uncertainty=0.1,
+    ):
+        beta_r  = CoherenceEngine.compute_c_beta(
+            activations, frictions, rho, delta_t, tau,
+            novelty, sensitivity, external_coherences
+        )
+        alpha_r = CoherenceEngine.compute_c_alpha(
+            integration, quality, complexity, uncertainty
+        )
 
-    @staticmethod
-    def full_analysis(activations, frictions=None, rho=1.0, delta_t=0.0, tau=1.0,
-                      novelty=5.0, sensitivity=5.0, external_coherences=None,
-                      integration=0.5, quality=0.5, complexity=1.0, uncertainty=0.1):
-        if frictions is None: frictions = LAYER_FRICTION
-        beta_r = CoherenceEngine.compute_c_beta(activations, frictions, rho, delta_t, tau, novelty, sensitivity, external_coherences)
-        alpha_r = CoherenceEngine.compute_c_alpha(integration, quality, complexity, uncertainty)
-        total_r = CoherenceEngine.compute_c_total(beta_r["c_beta"], alpha_r["c_alpha"])
+        total_r = CoherenceEngine.compute_c_total(
+            beta_r["c_beta"], alpha_r["c_alpha"]
+        )
+
         energies = beta_r["energies"]
-        mc = MetaconsciousnessCalculator.compute(activations, frictions)
 
-        # --- UNIFICACIÓN MAESTRA v3.3 ---
-        # 1. Armonía Estructural
+        # ✅ Fórmula correcta (suma)
         harmony = NegentropyCalculator.harmony(energies)
-        
-        # 2. Base Coherente (Ponderación de Pilares)
-        c_omega_base = (ALPHA * harmony) + (BETA * beta_r["c_beta"])
-        
-        # 3. Factor de Intención (Normalización de Escala)
-        # Usamos PHI para distribuir el peso de la integración sin saturar
-        integration_bonus = alpha_r["c_alpha"] * (BETA * PHI)
-        
-        # Resultado Final
-        c_omega = min(C_MAX, max(0.0, c_omega_base + integration_bonus))
-        # -------------------------------
+        c_omega = (alpha_r["c_alpha"] * harmony) + (beta_r["c_beta"])
 
-        if c_omega >= 0.91:
+        # Clamp físico
+        c_omega = min(C_MAX, max(0.0, c_omega))
+
+        # ✅ ORACLE como diagnóstico (NO rompe el modelo)
+        is_oracle = (
+            c_omega > 0.9
+            and beta_r["c_beta"] > 0.9 * CoherenceEngine.C_BETA_MAX
+            and abs(c_omega - 1.0) < 0.05
+        )
+
+        if is_oracle:
+            code, name = 999, "Oracle State"
+        elif c_omega >= ALPHA:
             code, name = CODE_INTEGRATED, "Integrated Architect"
         elif c_omega >= 0.4:
             code, name = CODE_SATURATION, "Critical Saturation"
@@ -159,13 +191,10 @@ class CoherenceEngine:
             code, name = CODE_ENTROPY, "Terminal Entropy"
 
         return {
-            "c_beta": beta_r, "c_alpha": alpha_r, "c_total": total_r, "c_omega": c_omega,
-            "negentropy": NegentropyCalculator.compute(energies),
-            "metaconsciousness": mc, "mc_level": MetaconsciousnessCalculator.level_name(mc),
-            "resonance": ResonanceLogic.compute(energies), "diagnostic_code": code, "diagnostic_name": name,
-            "four_pillars": {"beta": BETA, "kappa": KAPPA, "alpha": ALPHA, "emergence": sum(energies) * (1 - KAPPA) / 2},
+            "c_beta": beta_r,
+            "c_alpha": alpha_r,
+            "c_total": total_r,
+            "c_omega": c_omega,
+            "diagnostic_code": code,
+            "diagnostic_name": name,
         }
-
-    @staticmethod
-    def metacube_level(c_total, level=0):
-        return {"level": level, "c_total_here": c_total, "is_beta_of_level": level + 1, "ratio_alpha_beta": ALPHA / BETA}
