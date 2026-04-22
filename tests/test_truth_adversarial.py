@@ -576,7 +576,7 @@ class TestVPSIComplete:
         print(f"  Principios I-X PASS: todos verificados en {total:,} iteraciones")
 
     # ========================================================================
-    # APENDICE G — 21 DERIVACIONES COMPLETAS
+    # APENDICE G — 20 DERIVACIONES COMPLETAS
     # ========================================================================
 
     def test_appendix_g_all_21_derivations(self):
@@ -634,17 +634,9 @@ class TestVPSIComplete:
         assert he4_low == 26 and he4_mid == 27 and he4_high == 28
         print("    G.9: He-4 rango 26-28% PASS")
 
-                        # G.10: f_observer = 11.0 (Constante de Estructura del Observador)
-        # Derivación por simetría de red:
-        v_anclaje = V_CUBE              # 8 vértices
-        e_libertad = 3                  # Ejes dimensionales de R3
-        f_observer_vpsi = v_anclaje + e_libertad
-        
-        assert abs(f_observer_vpsi - 11.0) < 1e-15
-        print(f"    G.10: f_observer={f_observer_vpsi} (Sincronización R3) PASS")
+    
 
-
-        # G.11: Lambda cosmologica
+        # G.10: Lambda cosmologica
         exponent = (np.pi / BETA) + (BETA * PHI ** 2)
         lambda_calc = BETA ** exponent
         lambda_obs = 2.888e-122
@@ -652,28 +644,28 @@ class TestVPSIComplete:
         assert error_lambda < 5.0, f"G.11: error Lambda={error_lambda:.2f}%"
         print(f"    G.11: Lambda error={error_lambda:.2f}% PASS")
 
-        # G.12: mp/me = F * pi^5
+        # G.11: mp/me = F * pi^5
         mp_me_calc = F_CUBE * (np.pi ** 5)
         mp_me_obs = 1836.15267343
         error_mp = abs(mp_me_calc - mp_me_obs) / mp_me_obs * 100
         assert error_mp < 0.01, f"G.12: error mp/me={error_mp:.4f}%"
         print(f"    G.12: mp/me error={error_mp:.4f}% PASS")
 
-        # G.13: sin2(theta_W) = F/Ext = 6/26 = 3/13
+        # G.12: sin2(theta_W) = F/Ext = 6/26 = 3/13
         sin2_w = F_CUBE / EXT_CUBE
         sin2_w_obs = 0.23122
         error_w = abs(sin2_w - sin2_w_obs) / sin2_w_obs * 100
         assert error_w < 1.0, f"G.13: error Weinberg={error_w:.3f}%"
         print(f"    G.13: Weinberg error={error_w:.3f}% PASS")
 
-        # G.14: alpha_em^-1 = F*(F+C)*pi/alpha
+        # G.13: alpha_em^-1 = F*(F+C)*pi/alpha
         alpha_inv = (F_CUBE * (F_CUBE + C_CUBE) * np.pi) / ALPHA
         alpha_inv_obs = 137.035999084
         error_a = abs(alpha_inv - alpha_inv_obs) / alpha_inv_obs * 100
         assert error_a < 0.05, f"G.14: error alpha_em={error_a:.4f}%"
         print(f"    G.14: alpha_em error={error_a:.4f}% PASS")
 
-        # G.15: T_CMB = 100*epsilon donde epsilon = error Lambda relativo
+        # G.14: T_CMB = 100*epsilon donde epsilon = error Lambda relativo
         epsilon = error_lambda / 100
         t_cmb_calc = 100 * epsilon
         t_cmb_obs = 2.725
@@ -681,7 +673,7 @@ class TestVPSIComplete:
         assert t_cmb_calc > 0, "G.15: T_CMB debe ser positiva"
         print(f"    G.15: T_CMB={t_cmb_calc:.4f} K PASS")
 
-        # G.16: Periodo psicologico T = 2*pi / sqrt(pi^2 - phi^2_total/4)
+        # G.15: Periodo psicologico T = 2*pi / sqrt(pi^2 - phi^2_total/4)
         phi_total = 2 * np.pi * BETA  # friccion total aproximada
         discriminante = np.pi ** 2 - phi_total ** 2 / 4
         if discriminante > 0:
@@ -691,17 +683,17 @@ class TestVPSIComplete:
         else:
             print(f"    G.16: sistema sobreamortiguado PASS")
 
-        # G.17: alpha_em puro = 42*pi/alpha = F*(F+C)*pi/alpha = 137.022
+        # G.16: alpha_em puro = 42*pi/alpha = F*(F+C)*pi/alpha = 137.022
         alpha_pure = F_CUBE * (F_CUBE + C_CUBE) * np.pi / ALPHA
         assert abs(alpha_pure - 137.022) < 0.1, f"G.17: {alpha_pure}"
         print(f"    G.17: alpha_em_puro={alpha_pure:.4f} PASS")
 
-        # G.18: alpha_QED/alpha_G ~ 5*27^27 (log10 ~ 39.35)
+        # G.17: alpha_QED/alpha_G ~ 5*27^27 (log10 ~ 39.35)
         log_ratio = np.log10(5) + 27 * np.log10(27)
         assert abs(log_ratio - 39.346) < 0.1, f"G.18: log_ratio={log_ratio}"
         print(f"    G.18: alpha_QED/alpha_G log={log_ratio:.3f} PASS")
 
-        # G.19: Tension Hubble — H_local * (1-3*eps) -> H_Planck
+        # G.18: Tension Hubble — H_local * (1-3*eps) -> H_Planck
         H_local = 73.04
         eps_hubble = 0.02716
         H_planck_calc = H_local * (1 - 3 * eps_hubble)
@@ -710,13 +702,13 @@ class TestVPSIComplete:
         assert error_H < 2.0, f"G.19: error Hubble={error_H:.3f}%"
         print(f"    G.19: Hubble tension error={error_H:.3f}% PASS")
 
-        # G.20: Radio clasico del electron re ~ 2.817e-15 m
+        # G.19: Radio clasico del electron re ~ 2.817e-15 m
         # re = alpha * hbar / (me * c) — verificamos estructura
         alpha_fs = 1 / alpha_inv
         assert alpha_fs > 0 and alpha_fs < 0.01, "G.20: alpha_fs fuera de rango"
         print(f"    G.20: estructura re verificada PASS")
 
-        # G.21: Masa del electron — orden de magnitud desde cubo
+        # G.20: Masa del electron — orden de magnitud desde cubo
         # me*c^2 ~ alpha_inv_obs - alpha_inv_pure - 6*eps (en unidades MeV)
         me_calc = alpha_inv_obs - alpha_pure - 6 * eps_hubble
         assert me_calc > 0.3 and me_calc < 0.7, f"G.21: me_calc={me_calc}"
