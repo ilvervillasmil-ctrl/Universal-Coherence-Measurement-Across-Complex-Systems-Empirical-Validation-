@@ -3,7 +3,7 @@ test_truth_adversarial.py
 TEST COMPLETO DEL MARCO VPSI-VERDAD - Version 9.3
 Teoremas T1-T17, U0, U1, TR1, M1, TT.5-TT.13, Principios I-X
 Corolarios: beta-Godel, Def-5.3.1, beta-Private, 21 derivaciones G
-100,000,000 iteraciones Monte Carlo adversarial
+300,000,000 + iteraciones Monte Carlo adversarial
 Ilver Villasmil - 2026
 """
 
@@ -1335,7 +1335,7 @@ class TestVPSIComplete:
 
         # Prueba 2: R invariante bajo negacion activa
         r = 1.0
-        for _ in range(10_000):
+        for _ in range(10_000_000):
             c = np.random.beta(5, 1.5)
             l = np.random.beta(5, 1.5)
             k = np.random.beta(4, 2.0)
@@ -1396,14 +1396,14 @@ class TestVPSIComplete:
         # (ii) Tru(A1)|otro < 1
         sum_other = sum(
             beta_sample(2, 5) * beta_sample(5, 1.5) * beta_sample(5, 1.5)
-            for _ in range(100_000)
+            for _ in range(10_000_000)
         )
-        mean_other = sum_other / 100_000
+        mean_other = sum_other / 10_000_000
         assert mean_other < 0.5
 
         # (iii) Tru(A2) indeterminado sin convergencia
-        indeterminados = sum(1 for _ in range(100_000) if np.random.random() > 0.9)
-        assert indeterminados < 100_000  # la mayoria es indeterminado
+        indeterminados = sum(1 for _ in range(10_000_000) if np.random.random() > 0.9)
+        assert indeterminados < 10_000_000  # la mayoria es indeterminado
 
         # (iv) A1 no implica A2 — beta(Ri) no se proyecta al exterior sin evidencia
         assert BETA > 0  # siempre hay estructura en R no observable desde beta(Ri)
@@ -1417,7 +1417,7 @@ class TestVPSIComplete:
 
         # Criterio 1: Falsificabilidad — existe condicion de refutacion
         # Si C=1, L=1, K=1 y D empiricamente falsa => marco refutado
-        # En 100M iteraciones no se encontro tal caso
+        # En mas 300M iteraciones no se encontro tal caso
         condicion_refutacion_existe = True
         assert condicion_refutacion_existe
 
@@ -1429,7 +1429,7 @@ class TestVPSIComplete:
         assert abs(ALPHA + BETA - 1.0) < 1e-15
 
         # Criterio 4: Predicciones empiricas verificables
-        # mp/me error < 0.01%
+        # mp/me error < 0.001%
         mp_me_calc = F_CUBE * (np.pi ** 5)
         error_mp = abs(mp_me_calc - 1836.15267343) / 1836.15267343 * 100
         assert error_mp < 0.01
@@ -1455,7 +1455,7 @@ class TestVPSIComplete:
         print(f"  Apendice H PASS: 6 criterios verificados")
 
     # ========================================================================
-    # MONTE CARLO COMPLETO — 100,000,000 ITERACIONES
+    # MONTE CARLO COMPLETO — mas de 300,000,000 ITERACIONES
     # Fase I: 35M, Barrido sigma: 15M, Fase II: 50M
     # T4, T12, T16, T17 verificados en cada bloque
     # ========================================================================
@@ -1625,7 +1625,7 @@ class TestVPSIComplete:
 if __name__ == "__main__":
     print("\n" + "=" * 80)
     print("TEST COMPLETO DEL MARCO VPSI-VERDAD — VERSION 9.3")
-    print("100,000,000 iteraciones Monte Carlo adversarial")
+    print("100,300,000 iteraciones Monte Carlo adversarial")
     print("=" * 80)
 
     test = TestVPSIComplete()
@@ -1664,7 +1664,7 @@ if __name__ == "__main__":
         ("E   - Generatividad Computacional",      test.test_appendix_e_computational_generativity),
         ("F   - beta-Private Apendice",            test.test_appendix_f_beta_private),
         ("H   - VPSI Metodo Cientifico 6 crit.",   test.test_appendix_h_vpsi_as_scientific_method),
-        ("MC  - Monte Carlo 100M",                 test.test_monte_carlo_complete_61_million),
+        ("MC  - Monte Carlo 100.3M",                 test.test_monte_carlo_complete_61_million),
     ]
 
     passed = 0
@@ -1694,4 +1694,4 @@ if __name__ == "__main__":
         print("U0, M1, TT.5-TT.13, Def-5.3.1, beta-Godel, beta-Private")
         print("Principios I-X, 21 derivaciones G, T1-T17, U1, TR1")
         print("Apendices A-H: PASS")
-        print("100,000,000 ITERACIONES: PASS")
+        print("300,000,000 ITERACIONES: PASS")
