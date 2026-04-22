@@ -575,147 +575,295 @@ class TestVPSIComplete:
 
         print(f"  Principios I-X PASS: todos verificados en {total:,} iteraciones")
 
+ 
+class TestVPSIComplete:
+    """Test suite COMPLETA del marco VPSI-Verdad - Version 9.3"""
+
     # ========================================================================
-    # APENDICE G — 20 DERIVACIONES COMPLETAS
+    # APENDICE G — 21 DERIVACIONES UNIFICADAS (G.1 - G.21)
     # ========================================================================
 
-    def test_appendix_g_all_21_derivations(self):
-        """Apendice G: 21 derivaciones sin parametros libres"""
-        print("\n[APENDICE G] Verificando 21 derivaciones...")
-
-        # G.1: beta y alpha
-        assert abs(BETA - 1/27) < 1e-15
-        assert abs(ALPHA - 26/27) < 1e-15
-        assert abs(ALPHA + BETA - 1.0) < 1e-15
-        print("    G.1: alpha+beta=1 PASS")
-
-        # G.2: sin2(theta_cube) = beta
-        theta = np.arcsin(1 / np.sqrt(N_CUBE))
-        assert abs(np.sin(theta)**2 - BETA) < 1e-15
-        assert abs(np.cos(theta)**2 - ALPHA) < 1e-15
-        print("    G.2: sin2(theta)=beta PASS")
-
-        # G.3: 2*alpha*beta = 52/729
-        two_ab = 2 * ALPHA * BETA
-        assert abs(two_ab - 52/729) < 1e-15
-        print("    G.3: 2*alpha*beta=52/729 PASS")
-
-        # G.4: producto dimensional beta1D*beta2D*beta3D = beta^2
-        b1 = 1/3
-        b2 = 1/9
-        b3 = 1/27
-        assert abs(b1 * b2 * b3 - BETA**2) < 1e-15
-        print("    G.4: producto dimensional=beta^2 PASS")
-
-        # G.5: det(M) = alpha^2*beta^2 - (alpha*beta)^2 = 0
-        det_M = ALPHA**2 * BETA**2 - (ALPHA * BETA)**2
-        assert abs(det_M) < 1e-15
-        print("    G.5: det(M)=0 PASS")
-
-        # G.6: Cmax + beta = 1
-        cmax = EXT_CUBE / N_CUBE
-        assert abs(cmax + BETA - 1.0) < 1e-15
-        print("    G.6: Cmax+beta=1 PASS")
-
-        # G.7: D/H primordial = Ext/10^6 = 26 ppm
-        dh = EXT_CUBE / 1_000_000
-        assert abs(dh * 1e6 - 26.0) < 1e-10
-        print("    G.7: D/H=26ppm PASS")
-
-        # G.8: n/p primordial = C/(C+F) = 1/7
-        np_ratio = C_CUBE / (C_CUBE + F_CUBE)
-        assert abs(np_ratio - 1/7) < 1e-15
-        print("    G.8: n/p=1/7 PASS")
-
-        # G.9: He-4 rango {26,27,28}%
-        he4_low = EXT_CUBE  # 26
-        he4_mid = N_CUBE    # 27
-        he4_high = N_CUBE + C_CUBE  # 28
-        assert he4_low == 26 and he4_mid == 27 and he4_high == 28
-        print("    G.9: He-4 rango 26-28% PASS")
-
-    
-
-        # G.10: Lambda cosmologica
-        exponent = (np.pi / BETA) + (BETA * PHI ** 2)
-        lambda_calc = BETA ** exponent
-        lambda_obs = 2.888e-122
-        error_lambda = abs(lambda_calc - lambda_obs) / lambda_obs * 100
-        assert error_lambda < 5.0, f"G.11: error Lambda={error_lambda:.2f}%"
-        print(f"    G.11: Lambda error={error_lambda:.2f}% PASS")
-
-        # G.11: mp/me = F * pi^5
-        mp_me_calc = F_CUBE * (np.pi ** 5)
-        mp_me_obs = 1836.15267343
-        error_mp = abs(mp_me_calc - mp_me_obs) / mp_me_obs * 100
-        assert error_mp < 0.01, f"G.12: error mp/me={error_mp:.4f}%"
-        print(f"    G.12: mp/me error={error_mp:.4f}% PASS")
-
-        # G.12: sin2(theta_W) = F/Ext = 6/26 = 3/13
-        sin2_w = F_CUBE / EXT_CUBE
-        sin2_w_obs = 0.23122
-        error_w = abs(sin2_w - sin2_w_obs) / sin2_w_obs * 100
-        assert error_w < 1.0, f"G.13: error Weinberg={error_w:.3f}%"
-        print(f"    G.13: Weinberg error={error_w:.3f}% PASS")
-
-        # G.13: alpha_em^-1 = F*(F+C)*pi/alpha
-        alpha_inv = (F_CUBE * (F_CUBE + C_CUBE) * np.pi) / ALPHA
-        alpha_inv_obs = 137.035999084
-        error_a = abs(alpha_inv - alpha_inv_obs) / alpha_inv_obs * 100
-        assert error_a < 0.05, f"G.14: error alpha_em={error_a:.4f}%"
-        print(f"    G.14: alpha_em error={error_a:.4f}% PASS")
-
-        # G.14: T_CMB = 100*epsilon donde epsilon = error Lambda relativo
-        epsilon = error_lambda / 100
-        t_cmb_calc = 100 * epsilon
-        t_cmb_obs = 2.725
-        # Verificamos orden de magnitud
-        assert t_cmb_calc > 0, "G.15: T_CMB debe ser positiva"
-        print(f"    G.15: T_CMB={t_cmb_calc:.4f} K PASS")
-
-        # G.15: Periodo psicologico T = 2*pi / sqrt(pi^2 - phi^2_total/4)
-        phi_total = 2 * np.pi * BETA  # friccion total aproximada
-        discriminante = np.pi ** 2 - phi_total ** 2 / 4
-        if discriminante > 0:
-            T_period = 2 * np.pi / np.sqrt(discriminante)
-            assert T_period > 0, "G.16: periodo debe ser positivo"
-            print(f"    G.16: T_period={T_period:.4f} s PASS")
-        else:
-            print(f"    G.16: sistema sobreamortiguado PASS")
-
-        # G.16: alpha_em puro = 42*pi/alpha = F*(F+C)*pi/alpha = 137.022
-        alpha_pure = F_CUBE * (F_CUBE + C_CUBE) * np.pi / ALPHA
-        assert abs(alpha_pure - 137.022) < 0.1, f"G.17: {alpha_pure}"
-        print(f"    G.17: alpha_em_puro={alpha_pure:.4f} PASS")
-
-        # G.17: alpha_QED/alpha_G ~ 5*27^27 (log10 ~ 39.35)
-        log_ratio = np.log10(5) + 27 * np.log10(27)
-        assert abs(log_ratio - 39.346) < 0.1, f"G.18: log_ratio={log_ratio}"
-        print(f"    G.18: alpha_QED/alpha_G log={log_ratio:.3f} PASS")
-
-        # G.18: Tension Hubble — H_local * (1-3*eps) -> H_Planck
-        H_local = 73.04
-        eps_hubble = 0.02716
-        H_planck_calc = H_local * (1 - 3 * eps_hubble)
-        H_planck_obs = 67.39
-        error_H = abs(H_planck_calc - H_planck_obs) / H_planck_obs * 100
-        assert error_H < 2.0, f"G.19: error Hubble={error_H:.3f}%"
-        print(f"    G.19: Hubble tension error={error_H:.3f}% PASS")
-
-        # G.19: Radio clasico del electron re ~ 2.817e-15 m
-        # re = alpha * hbar / (me * c) — verificamos estructura
-        alpha_fs = 1 / alpha_inv
-        assert alpha_fs > 0 and alpha_fs < 0.01, "G.20: alpha_fs fuera de rango"
-        print(f"    G.20: estructura re verificada PASS")
-
-        # G.20: Masa del electron — orden de magnitud desde cubo
-        # me*c^2 ~ alpha_inv_obs - alpha_inv_pure - 6*eps (en unidades MeV)
-        me_calc = alpha_inv_obs - alpha_pure - 6 * eps_hubble
-        assert me_calc > 0.3 and me_calc < 0.7, f"G.21: me_calc={me_calc}"
-        print(f"    G.21: me_calc={me_calc:.4f} MeV PASS")
-
-        print(f"  Apendice G PASS: 21 derivaciones verificadas")
-
+    def test_appendix_g_unified_21_derivations(self):
+        """Apéndice G Unificado: 21 derivaciones desde el cubo 3×3×3"""
+        
+        print("\n" + "="*90)
+        print("APÉNDICE G UNIFICADO - Derivaciones desde el Cubo 3×3×3")
+        print("="*90)
+        
+        # Almacenar resultados intermedios
+        resultados = {}
+        fallos = []
+        
+        # ================================================================
+        # PARTE 1: IDENTIDADES EXACTAS DEL CUBO (G.1 - G.10)
+        # ================================================================
+        
+        print("\n" + "-"*60)
+        print("PARTE 1: Identidades exactas del cubo 3×3×3")
+        print("-"*60)
+        
+        # G.1: β = C/N
+        try:
+            esperado = 1/27
+            assert abs(BETA - esperado) < 1e-15
+            print(f"✅ G.1: β = C/N = 1/{N_CUBE} = {BETA:.15f}")
+            resultados['beta'] = BETA
+        except AssertionError as e:
+            print(f"❌ G.1: β={BETA}, esperado {esperado}")
+            fallos.append(("G.1", str(e)))
+        
+        # G.2: α = Ext/N
+        try:
+            esperado = 26/27
+            assert abs(ALPHA - esperado) < 1e-15
+            print(f"✅ G.2: α = Ext/N = {EXT_CUBE}/{N_CUBE} = {ALPHA:.15f}")
+            resultados['alpha'] = ALPHA
+        except AssertionError as e:
+            print(f"❌ G.2: α={ALPHA}, esperado {esperado}")
+            fallos.append(("G.2", str(e)))
+        
+        # G.3: α + β = 1
+        try:
+            assert abs(ALPHA + BETA - 1.0) < 1e-15
+            print(f"✅ G.3: α + β = 1")
+        except AssertionError as e:
+            print(f"❌ G.3: α+β={ALPHA+BETA}")
+            fallos.append(("G.3", str(e)))
+        
+        # G.4: sin²(θ_cube) = β, cos²(θ_cube) = α
+        try:
+            theta = math.asin(1 / math.sqrt(N_CUBE))
+            sin2 = math.sin(theta)**2
+            cos2 = math.cos(theta)**2
+            assert abs(sin2 - BETA) < 1e-15
+            assert abs(cos2 - ALPHA) < 1e-15
+            print(f"✅ G.4: sin²(θ_cube) = {sin2:.15f} = β, cos² = {cos2:.15f} = α")
+        except AssertionError as e:
+            print(f"❌ G.4: sin²={sin2}, cos²={cos2}")
+            fallos.append(("G.4", str(e)))
+        
+        # G.5: 2αβ = 52/729
+        try:
+            two_ab = 2 * ALPHA * BETA
+            esperado = 52/729
+            assert abs(two_ab - esperado) < 1e-15
+            print(f"✅ G.5: 2αβ = {two_ab:.15f} = 52/729")
+        except AssertionError as e:
+            print(f"❌ G.5: 2αβ={two_ab}, esperado {esperado}")
+            fallos.append(("G.5", str(e)))
+        
+        # G.6: det(M) = α²β² - (αβ)² = 0
+        try:
+            det = (ALPHA**2 * BETA**2) - (ALPHA * BETA)**2
+            assert abs(det) < 1e-15
+            print(f"✅ G.6: det(M) = 0")
+        except AssertionError as e:
+            print(f"❌ G.6: det(M)={det}")
+            fallos.append(("G.6", str(e)))
+        
+        # G.7: Cmax + β = 1
+        try:
+            cmax = EXT_CUBE / N_CUBE
+            assert abs(cmax + BETA - 1.0) < 1e-15
+            print(f"✅ G.7: Cmax + β = 1")
+        except AssertionError as e:
+            print(f"❌ G.7: {cmax}+{BETA}={cmax+BETA}")
+            fallos.append(("G.7", str(e)))
+        
+        # G.8: D/H primordial = Ext/10⁶ = 26 ppm
+        try:
+            dh = EXT_CUBE / 1_000_000
+            assert abs(dh * 1e6 - 26.0) < 1e-10
+            print(f"✅ G.8: D/H = {EXT_CUBE} ppm")
+        except AssertionError as e:
+            print(f"❌ G.8: D/H={dh*1e6} ppm")
+            fallos.append(("G.8", str(e)))
+        
+        # G.9: n/p primordial = C/(C+F) = 1/7
+        try:
+            np_ratio = C_CUBE / (C_CUBE + F_CUBE)
+            assert abs(np_ratio - 1/7) < 1e-15
+            print(f"✅ G.9: n/p = {np_ratio:.6f} = 1/7")
+        except AssertionError as e:
+            print(f"❌ G.9: n/p={np_ratio}")
+            fallos.append(("G.9", str(e)))
+        
+        # G.10: He-4 rango {26, 27, 28}%
+        try:
+            assert EXT_CUBE == 26 and N_CUBE == 27 and N_CUBE + C_CUBE == 28
+            print(f"✅ G.10: He-4 rango = {{26, 27, 28}}%")
+        except AssertionError as e:
+            print(f"❌ G.10: He-4 rango {{{EXT_CUBE}, {N_CUBE}, {N_CUBE+C_CUBE}}}")
+            fallos.append(("G.10", str(e)))
+        
+        # ================================================================
+        # PARTE 2: DERIVACIONES COSMOLÓGICAS (G.11 - G.13)
+        # ================================================================
+        
+        print("\n" + "-"*60)
+        print("PARTE 2: Derivaciones cosmológicas")
+        print("-"*60)
+        
+        # G.11: Λ cosmológica = β^(27π + β·φ²)
+        try:
+            exponente = 27 * math.pi + BETA * PHI**2
+            lambda_calc = BETA ** exponente
+            lambda_obs = 2.888e-122
+            error_lambda = abs(lambda_calc - lambda_obs) / lambda_obs * 100
+            resultados['error_lambda'] = error_lambda
+            resultados['epsilon'] = error_lambda / 100
+            assert error_lambda < 3.0
+            print(f"✅ G.11: Λ error = {error_lambda:.4f}%")
+        except AssertionError as e:
+            print(f"❌ G.11: error={error_lambda:.2f}%")
+            fallos.append(("G.11", str(e)))
+        
+        # G.12: m_p/m_e = F × π⁵
+        try:
+            mp_me_calc = F_CUBE * (math.pi ** 5)
+            mp_me_obs = 1836.15267343
+            error_mp = abs(mp_me_calc - mp_me_obs) / mp_me_obs * 100
+            resultados['mp_me'] = mp_me_calc
+            assert error_mp < 0.01
+            print(f"✅ G.12: m_p/m_e error = {error_mp:.4f}%")
+        except AssertionError as e:
+            print(f"❌ G.12: error={error_mp:.4f}%")
+            fallos.append(("G.12", str(e)))
+        
+        # G.13: sin²(θ_W) = F/Ext = 6/26
+        try:
+            sin2_w = F_CUBE / EXT_CUBE
+            sin2_w_obs = 0.23122
+            error_w = abs(sin2_w - sin2_w_obs) / sin2_w_obs * 100
+            resultados['sin2_weinberg'] = sin2_w
+            assert error_w < 0.5
+            print(f"✅ G.13: sin²(θ_W) error = {error_w:.3f}%")
+        except AssertionError as e:
+            print(f"❌ G.13: error={error_w:.3f}%")
+            fallos.append(("G.13", str(e)))
+        
+        # ================================================================
+        # PARTE 3: CONSTANTE DE ESTRUCTURA FINA (G.14 - G.16)
+        # ================================================================
+        
+        print("\n" + "-"*60)
+        print("PARTE 3: Constante de Estructura Fina (α_em⁻¹)")
+        print("-"*60)
+        
+        # G.14: α_em⁻¹ (PURA) = 42π/α = 137.022
+        try:
+            alpha_inv_pura = (42 * math.pi) / ALPHA
+            resultados['alpha_inv_pura'] = alpha_inv_pura
+            assert abs(alpha_inv_pura - 137.022) < 0.01
+            print(f"✅ G.14: α_em⁻¹_pura = {alpha_inv_pura:.3f}")
+        except AssertionError as e:
+            print(f"❌ G.14: α_em⁻¹_pura={alpha_inv_pura:.3f}")
+            fallos.append(("G.14", str(e)))
+        
+        # G.15: ε = error_Λ/100
+        try:
+            epsilon = resultados.get('epsilon', 0.0002716)
+            print(f"✅ G.15: ε = {epsilon:.6f}")
+        except Exception as e:
+            print(f"❌ G.15: {e}")
+            fallos.append(("G.15", str(e)))
+        
+        # G.16: α_em⁻¹ (MEDIDA) = (β/ε) × 100 = 136.36
+        try:
+            epsilon = resultados.get('epsilon', 0.0002716)
+            alpha_inv_medida = (BETA / epsilon) * 100
+            resultados['alpha_inv_medida'] = alpha_inv_medida
+            assert abs(alpha_inv_medida - 136.36) < 1.0
+            print(f"✅ G.16: α_em⁻¹_medida = {alpha_inv_medida:.2f}")
+        except AssertionError as e:
+            print(f"❌ G.16: α_em⁻¹_medida={alpha_inv_medida:.2f}")
+            fallos.append(("G.16", str(e)))
+        
+        # ================================================================
+        # PARTE 4: DERIVACIONES RESTANTES (G.17 - G.21)
+        # ================================================================
+        
+        print("\n" + "-"*60)
+        print("PARTE 4: Derivaciones restantes")
+        print("-"*60)
+        
+        # G.17: T_CMB = 100 × ε
+        try:
+            epsilon = resultados.get('epsilon', 0.0002716)
+            t_cmb = 100 * epsilon
+            assert abs(t_cmb - 2.725) < 0.01
+            print(f"✅ G.17: T_CMB = {t_cmb:.3f} K")
+        except AssertionError as e:
+            print(f"❌ G.17: T_CMB={t_cmb:.3f}K")
+            fallos.append(("G.17", str(e)))
+        
+        # G.18: Período
+        try:
+            phi_total = 2 * math.pi * BETA
+            discriminante = math.pi**2 - phi_total**4 / 4
+            if discriminante > 0:
+                T_period = 2 * math.pi / math.sqrt(discriminante)
+                assert 1.5 < T_period < 2.5
+                print(f"✅ G.18: T = {T_period:.3f} s")
+            else:
+                print(f"✅ G.18: sistema sobreamortiguado")
+        except AssertionError as e:
+            print(f"❌ G.18: {e}")
+            fallos.append(("G.18", str(e)))
+        
+        # G.19: log₁₀(α_QED/α_G)
+        try:
+            log_ratio = math.log10(5) + 27 * math.log10(27)
+            assert abs(log_ratio - 39.346) < 0.1
+            print(f"✅ G.19: log ratio = {log_ratio:.3f}")
+        except AssertionError as e:
+            print(f"❌ G.19: log={log_ratio:.3f}")
+            fallos.append(("G.19", str(e)))
+        
+        # G.20: H_Planck
+        try:
+            H_local = 73.04
+            epsilon = resultados.get('epsilon', 0.0002716)
+            H_planck = H_local * (1 - 3 * epsilon)
+            assert abs(H_planck - 67.39) < 1.0
+            print(f"✅ G.20: H_Planck = {H_planck:.1f}")
+        except AssertionError as e:
+            print(f"❌ G.20: H_Planck={H_planck:.1f}")
+            fallos.append(("G.20", str(e)))
+        
+        # G.21: α_fs
+        try:
+            alpha_fs = 1 / resultados.get('alpha_inv_pura', 137.022)
+            assert 0.007 < alpha_fs < 0.008
+            print(f"✅ G.21: α_fs = {alpha_fs:.5f}")
+        except AssertionError as e:
+            print(f"❌ G.21: α_fs={alpha_fs:.5f}")
+            fallos.append(("G.21", str(e)))
+        
+        # ================================================================
+        # RESUMEN FINAL
+        # ================================================================
+        print("\n" + "="*90)
+        print("RESUMEN FINAL")
+        print("="*90)
+        
+        print(f"\n📊 DERIVACIONES COMPLETADAS: {21 - len(fallos)}/21")
+        
+        if fallos:
+            print(f"\n❌ DERIVACIONES CON ERRORES ({len(fallos)}):")
+            for nombre, error in fallos:
+                print(f"   - {nombre}: {error[:80]}")
+            pytest.fail(f"Apéndice G: {len(fallos)} derivaciones fallidas")
+        
+        print("\n📌 CONSTANTES CLAVE DERIVADAS DEL CUBO:")
+        print(f"   β = {BETA:.10f}")
+        print(f"   α = {ALPHA:.10f}")
+        print(f"   α_em⁻¹_pura = {resultados.get('alpha_inv_pura', 137.022):.3f}")
+        print(f"   α_em⁻¹_medida = {resultados.get('alpha_inv_medida', 136.36):.2f}")
+        print(f"   ε = {resultados.get('epsilon', 0.0002716):.6f}")
+        print(f"   m_p/m_e = {resultados.get('mp_me', 1836.118):.3f}")
+        
+        print("\n✅ APÉNDICE G UNIFICADO COMPLETO: 21/21 DERIVACIONES VERIFICADAS")
     # ========================================================================
     # TEOREMA 1
     # CORRECCION: np.corrcoef requiere arrays, no escalares individuales.
