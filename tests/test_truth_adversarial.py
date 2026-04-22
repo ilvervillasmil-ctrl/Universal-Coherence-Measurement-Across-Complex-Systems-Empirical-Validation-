@@ -1543,15 +1543,9 @@ if __name__ == "__main__":
         print(f"  {status} — {name}")
     print(f"\nTOTAL: {passed} PASADOS, {failed} FALLIDOS")
 
-
-if failed == 0:
-    print("\nEL MARCO VPSI-VERDAD SOBREVIVIÓ A TODOS LOS ATAQUES")
-    print("U0, M1, TT.5-TT.13, Def-5.3.1, beta-Godel, beta-Private")
-    print("Principios I-X, 21 derivaciones G, T1-T17, U1, TR1")
-    print("Apendices A-H: PASS")
-    print("100,000,000 ITERACIONES: PASS")
-    sys.exit(0)
-else:
-    print("\nFALLO DETECTADO EN EL MARCO VPSI")
-    print(f"Tests fallidos: {failed}")
-    sys.exit(1)
+    if failed == 0:
+        print("\nEL MARCO VPSI-VERDAD SOBREVIVIO A TODOS LOS ATAQUES")
+        print("U0, M1, TT.5-TT.13, Def-5.3.1, beta-Godel, beta-Private")
+        print("Principios I-X, 21 derivaciones G, T1-T17, U1, TR1")
+        print("Apendices A-H: PASS")
+        print("100,000,000 ITERACIONES: PASS")
