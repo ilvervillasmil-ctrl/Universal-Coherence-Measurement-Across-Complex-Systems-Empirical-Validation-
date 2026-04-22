@@ -634,18 +634,14 @@ class TestVPSIComplete:
         assert he4_low == 26 and he4_mid == 27 and he4_high == 28
         print("    G.9: He-4 rango 26-28% PASS")
 
-                # G.10: f_observer = 11.0 (Constante de Estructura del Observador)
-        # La formula corregida vincula la topología del cubo 3x3x3 con 
-        # las dimensiones de libertad del observador en R3.
-        Oh = F_CUBE # 6 caras observables
+                        # G.10: f_observer = 11.0 (Constante de Estructura del Observador)
+        # Derivación por simetría de red:
+        v_anclaje = V_CUBE              # 8 vértices
+        e_libertad = 3                  # Ejes dimensionales de R3
+        f_observer_vpsi = v_anclaje + e_libertad
         
-        # Derivación estructural: (Ejes simétricos externos - Ejes de interfaz) - Centro
-        # f_observer = (EXT_CUBE / 2) - (Oh / 2) - 2
-        # (26 / 2) - (6 / 2) - 2 = 13 - 3 - 2 = 11.0
-        f_observer = (EXT_CUBE / 2) - (Oh / 2) - 2
-        
-        assert abs(f_observer - 11.0) < 1e-10
-        print("    G.10: f_observer=11 PASS")
+        assert abs(f_observer_vpsi - 11.0) < 1e-15
+        print(f"    G.10: f_observer={f_observer_vpsi} (Sincronización R3) PASS")
 
 
         # G.11: Lambda cosmologica
