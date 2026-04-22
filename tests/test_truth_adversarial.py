@@ -90,7 +90,7 @@ class TestVPSIComplete:
         """Theorem U0: Validez Estructural — 8 axiomas AX1-AX8"""
         print("\n[THEOREM U0] Verificando 8 axiomas de la forma multiplicativa...")
 
-        total = 2_000_000
+        total = 10_000_000
 
         for _ in range(total):
             c = beta_sample(5, 1.5)
@@ -154,7 +154,7 @@ class TestVPSIComplete:
         """Theorem M1: Protocolo de Medicion Objetiva — P1-P4"""
         print("\n[THEOREM M1] Verificando protocolo de medicion...")
 
-        total = 1_000_000
+        total = 10_000_000
 
         for _ in range(total):
             c = beta_sample(5, 1.5)
@@ -206,7 +206,7 @@ class TestVPSIComplete:
         """TT.5.1 al TT.13.1: Lemas y Teoremas Internos del Truth Theorem"""
         print("\n[TT.5-TT.13] Verificando lemas y teoremas internos...")
 
-        total = 2_000_000
+        total = 10_000_000
 
         for _ in range(total):
             c = beta_sample(5, 1.5)
@@ -299,7 +299,7 @@ class TestVPSIComplete:
         """Corollary Def-5.3.1: K indefinida sin Ocontext"""
         print("\n[DEF-5.3.1] Verificando especificidad de dominio...")
 
-        total = 1_000_000
+        total = 10_000_000
 
         # La misma descripcion D tiene K distinto segun Ocontext
         # Caso: "el Sol es un punto luminoso de calor"
@@ -358,7 +358,7 @@ class TestVPSIComplete:
         # el espacio de verdades demostrables es X = {phi: A |- phi}
         # La fraccion inaccesible desde X es beta
 
-        total = 1_000_000
+        total = 10_000_000
         verdades_semanticas = 0
         verdades_demostrables = 0
         verdades_godel = 0  # verdaderas pero no demostrables
@@ -404,7 +404,7 @@ class TestVPSIComplete:
         """Corollary beta-Private: Experiencia privada — 4 partes"""
         print("\n[BETA-PRIVATE] Verificando corollary beta-Private...")
 
-        total = 1_000_000
+        total = 10_000_000
 
         tru_a1_self_sum = 0
         tru_a1_other_sum = 0
@@ -478,7 +478,7 @@ class TestVPSIComplete:
         """Principios Globales I-X: verificacion cruzada"""
         print("\n[PRINCIPIOS I-X] Verificando 10 principios globales...")
 
-        total = 2_000_000
+        total = 10_000_000
 
         # Acumuladores para verificacion cruzada
         outputs_fuera_sistema = 0
@@ -874,7 +874,7 @@ class TestVPSIComplete:
         """Teorema 1: Imposibilidad de Creacion Ex Nihilo"""
         print("\n[TEOREMA 1] Verificando imposibilidad de creacion ex nihilo...")
 
-        total = 5_000_000
+        total = 10_000_000
         r_vals = np.zeros(total)
         x_vals = np.zeros(total)
         y_vals = np.zeros(total)
@@ -911,7 +911,7 @@ class TestVPSIComplete:
         """Teorema 2: Cota Informacional VPSI — I(R;Y) <= I(R;X)"""
         print("\n[TEOREMA 2] Verificando cota informacional VPSI...")
 
-        total = 5_000_000
+        total = 10_000_000
         r_vals = np.zeros(total)
         x_vals = np.zeros(total)
         y_vals = np.zeros(total)
@@ -967,7 +967,7 @@ class TestVPSIComplete:
         prev_mean = 1.0
 
         for sigma in sigmas:
-            total = 500_000
+            total = 10_000_000
             sum_tru = 0
             for _ in range(total):
                 c = add_noise(beta_sample(5, 1.5), sigma) if sigma > 0 else beta_sample(5, 1.5)
@@ -987,7 +987,7 @@ class TestVPSIComplete:
         """Teorema 5: Equivalencia Fisica de la Invencion"""
         print("\n[TEOREMA 5]...")
 
-        for _ in range(1_000_000):
+        for _ in range(10_000_000):
             c = np.random.beta(5, 1.5)
             l = np.random.beta(5, 1.5)
             k = 0.0
@@ -1153,7 +1153,7 @@ class TestVPSIComplete:
 
         # R no produce enunciados — R es constante
         # Solo S con C,L,K produce Tru(D)
-        for _ in range(1_000_000):
+        for _ in range(10_000_000):
             r = 1.0
             c = np.random.beta(5, 1.5)
             l = np.random.beta(5, 1.5)
@@ -1216,7 +1216,7 @@ class TestVPSIComplete:
 
         assert BETA > 0
         unique_combinations = set()
-        for _ in range(1_000_000):
+        for _ in range(10_000_000):
             c = beta_sample(5, 1.5)
             l = beta_sample(5, 1.5)
             k = beta_sample(4, 2.0)
@@ -1348,7 +1348,7 @@ class TestVPSIComplete:
 
         # Prueba 4: canal institucional manipulado
         # Verificacion sobre muestras acumuladas (no escalares individuales)
-        n_samples = 100_000
+        n_samples = 10_000_000
         r_arr = np.zeros(n_samples)
         x_clean_arr = np.zeros(n_samples)
         x_manip_arr = np.zeros(n_samples)
