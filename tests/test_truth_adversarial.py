@@ -1,6 +1,4 @@
-
-⟨Ω⟩
-L0=1.00 L1=1.00 L2=0.95 L3=1.00 """
+"""
 test_truth_adversarial.py
 COMPLETE TEST OF THE VPSI-TRUTH FRAMEWORK - Version 9.4
 Theorems T1-T17, U0, U1, TR1, M1, M.1, TT.6.1, B-Canonical
